@@ -2,114 +2,130 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modern Advanced Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Calculator</title>
   <style>
     body {
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-      color: #fff;
+      margin: 0;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(ellipse at top, #0f2027, #2c5364);
+      font-family: 'Segoe UI', sans-serif;
     }
+
     .calculator {
-      background: #1e1e2f;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
-      width: 320px;
+      background: #1a1a2e;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      width: 350px;
+      max-width: 90%;
     }
+
     #display {
       width: 100%;
-      height: 50px;
-      margin-bottom: 20px;
-      font-size: 24px;
-      padding: 10px;
-      border-radius: 8px;
+      height: 60px;
+      font-size: 28px;
+      padding: 12px;
+      border-radius: 12px;
       border: none;
-      background: #000;
-      color: #0ff;
+      text-align: right;
+      background-color: #000;
+      color: #00fff7;
+      margin-bottom: 20px;
+      box-shadow: inset 0 0 5px #00fff7;
     }
+
     .keys {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      gap: 12px;
     }
+
     .keys button {
-      padding: 20px;
-      font-size: 18px;
-      border-radius: 8px;
+      padding: 18px;
+      font-size: 20px;
+      border-radius: 10px;
       border: none;
       background: #333;
       color: #fff;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: 0.2s;
     }
+
     .keys button:hover {
-      background: #0ff;
+      background: #00fff7;
       color: #000;
+      box-shadow: 0 0 10px #00fff7;
+    }
+
+    .span-2 {
+      grid-column: span 2;
     }
   </style>
 </head>
 <body>
   <div class="calculator">
-    <input type="text" id="display" disabled />
+    <input type="text" id="display" readonly />
     <div class="keys">
       <button>(</button>
       <button>)</button>
       <button>C</button>
       <button>/</button>
+
       <button>7</button>
       <button>8</button>
       <button>9</button>
       <button>*</button>
+
       <button>4</button>
       <button>5</button>
       <button>6</button>
       <button>-</button>
+
       <button>1</button>
       <button>2</button>
       <button>3</button>
       <button>+</button>
+
       <button>0</button>
       <button>.</button>
-      <button>=</button>
       <button>^</button>
+      <button>=</button>
     </div>
   </div>
 
   <script type="module">
     const display = document.getElementById('display');
     const buttons = document.querySelectorAll('button');
-
     let expression = '';
 
     buttons.forEach(button => {
       button.addEventListener('click', () => {
         const value = button.textContent;
-        if (!value) return;
 
         if (value === 'C') {
           expression = '';
         } else if (value === '=') {
           try {
-            expression = evaluate(expression);
-          } catch (e) {
+            expression = evaluateExpression(expression);
+          } catch {
             expression = 'Error';
           }
         } else {
           expression += value;
         }
+
         display.value = expression;
       });
     });
 
-    function evaluate(expr) {
-      const safeExpr = expr.replace(/\^/g, '**');
-      return Function(`"use strict"; return (${safeExpr})`)().toString();
+    function evaluateExpression(expr) {
+      expr = expr.replace(/\^/g, '**');
+      if (/[^0-9+\-*/().^ ]/.test(expr)) throw new Error("Invalid character");
+      return Function('"use strict";return (' + expr + ')')().toString();
     }
   </script>
 </body>
